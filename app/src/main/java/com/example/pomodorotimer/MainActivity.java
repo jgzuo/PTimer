@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
@@ -267,42 +268,5 @@ public class MainActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-    }
-
-    // 自定义 CountDownTimer 类
-    private static class CountDownTimer {
-        private final long mMillisInFuture;
-        private final long mCountdownInterval;
-        private long mStopTimeInFuture;
-
-        public CountDownTimer(long millisInFuture, long countDownInterval) {
-            mMillisInFuture = millisInFuture;
-            mCountdownInterval = countDownInterval;
-        }
-
-        public synchronized final void cancel() {
-            mStopTimeInFuture = 0;
-        }
-
-        public synchronized final CountDownTimer start() {
-            mStopTimeInFuture = System.currentTimeMillis() + mMillisInFuture;
-            new Thread(() -> {
-                while (System.currentTimeMillis() < mStopTimeInFuture) {
-                    try {
-                        Thread.sleep(mCountdownInterval);
-                    } catch (InterruptedException e) {
-                        return;
-                    }
-                    long millisUntilFinished = mStopTimeInFuture - System.currentTimeMillis();
-                    onTick(millisUntilFinished);
-                }
-                onFinish();
-            }).start();
-            return this;
-        }
-
-        public void onTick(long millisUntilFinished) {}
-
-        public void onFinish() {}
     }
 }
