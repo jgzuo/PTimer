@@ -1,0 +1,67 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置 JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 授予 Gradle 执行权限
+      run: chmod +x gradlew
+
+    - name: 缓存 Gradle 依赖
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: 构建 Debug APK
+      run: ./gradlew assembleDebug --stacktrace
+
+    - name: 构建 Release APK
+      run: ./gradlew assembleRelease --stacktrace
+
+    - name: 上传 Debug APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: PTimer-debug-apk
+        path: app/build/outputs/apk/debug/app-debug.apk
+
+    - name: 上传 Release APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: PTimer-release-apk
+        path: app/build/outputs/apk/release/app-release.apk
+
+    - name: 生成 APK 下载信息
+      run: |
+        echo "## 📱 APK 构建完成！" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 构建信息" >> $GITHUB_STEP_SUMMARY
+        echo "- **提交**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **分支**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **时间**: $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 下载 APK" >> $GITHUB_STEP_SUMMARY
+        echo "请在下方的 'Artifacts' 部分下载 APK 文件：" >> $GITHUB_STEP_SUMMARY
+        echo "- \`PTimer-debug-apk\` - Debug 版本（用于测试）" >> $GITHUB_STEP_SUMMARY
+        echo "- \`PTimer-release-apk\` - Release 版本（优化后的生产版本）" >> $GITHUB_STEP_SUMMARY
