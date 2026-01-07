@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题颜色 -->
+    <color name="background">#121212</color>
+    <color name="textPrimary">#FFFFFF</color>
+    <color name="textSecondary">#B0B0B0</color>
+
+    <!-- 番茄钟模式颜色 -->
+    <color name="workColor">#FF6B6B</color>
+    <color name="shortBreakColor">#4ECDC4</color>
+    <color name="longBreakColor">#95E1D3</color>
+
+    <!-- 圆形进度条 -->
+    <color name="circleBackground">#2C2C2C</color>
+
+    <!-- 按钮颜色 -->
+    <color name="buttonBackground">#3A3A3A</color>
+    <color name="modeButtonBackground">#4A4A4A</color>
+    <color name="buttonText">#FFFFFF</color>
+</resources>
